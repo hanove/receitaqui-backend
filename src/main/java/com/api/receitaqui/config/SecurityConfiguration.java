@@ -33,6 +33,9 @@ public class SecurityConfiguration {
     // Endpoints que requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
             "/receita/**",
+            "/users/savedRecipes", // Url que usaremos para buscar receitas salvas
+            "/users/saveRecipe/**", // Url que usaremos para salvar uma receita
+            "/users/removeSavedRecipe/**", // Url que usaremos para remover uma receita salva
             "/receita/name/**", // Url que usaremos para buscar uma receita por id
             "/receita/category/**" // Url que usaremos para criar uma receita
     };
@@ -44,7 +47,8 @@ public class SecurityConfiguration {
 
     // Endpoints que só podem ser acessador por usuários com permissão de administrador
     public static final String[] ENDPOINTS_ADMIN = {
-            "/users/test/administrator"
+            "/users/test/administrator",
+            "receita/new"
     };
 
     @Bean

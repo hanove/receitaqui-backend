@@ -5,8 +5,10 @@ import com.api.receitaqui.dto.AuthenticationResponseDTO;
 import com.api.receitaqui.dto.CreateUserDTO;
 import com.api.receitaqui.dto.LoginUserDTO;
 import com.api.receitaqui.dto.RecoveryJwtTokenDTO;
+import com.api.receitaqui.model.Receita;
 import com.api.receitaqui.model.Role;
 import com.api.receitaqui.model.UserDetailsImpl;
+import com.api.receitaqui.repository.ReceitaRepository;
 import com.api.receitaqui.repository.UserRepository;
 import com.api.receitaqui.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,8 @@ public class UserService {
 
     @Autowired
     private SecurityConfiguration securityConfiguration;
+    @Autowired
+    private ReceitaRepository receitaRepository;
 
     // Método responsável por autenticar um usuário e retornar um token JWT
     public AuthenticationResponseDTO authenticateUser(LoginUserDTO loginUserDto) {
@@ -56,6 +60,31 @@ public class UserService {
         catch (Exception e) {
             throw new RuntimeException("Falha ao autenticar o usuário.", e);
         }
+    }
+
+    public List<Receita> getSavedRecipesOfLoggedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        User user = getUserByEmail(currentUserName);
+        return user.getSavedRecipes();
+    }
+
+    public void saveRecipe(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        User user = getUserByEmail(currentUserName);
+        Receita receita = receitaRepository.findById(id).orElseThrow(() -> new RuntimeException("Receita não encontrada."));
+        user.getSavedRecipes().add(receita);
+        userRepository.save(user);
+    }
+
+    public void removeSavedRecipe(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        User user = getUserByEmail(currentUserName);
+        Receita receita = receitaRepository.findById(id).orElseThrow(() -> new RuntimeException("Receita não encontrada."));
+        user.getSavedRecipes().remove(receita);
+        userRepository.save(user);
     }
 
     public User getUserByEmail(String email) {

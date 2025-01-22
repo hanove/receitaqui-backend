@@ -17,7 +17,7 @@ public class ReceitaController {
     @Autowired
     private ReceitaService receitaService;
 
-    @PostMapping
+    @PostMapping("/new")
     public ResponseEntity<Object> create(@RequestBody ReceitaDTO dto) {
         try {
             var res = receitaService.create(dto);

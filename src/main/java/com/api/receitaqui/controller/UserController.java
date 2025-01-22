@@ -4,11 +4,14 @@ import com.api.receitaqui.dto.AuthenticationResponseDTO;
 import com.api.receitaqui.dto.CreateUserDTO;
 import com.api.receitaqui.dto.LoginUserDTO;
 import com.api.receitaqui.dto.RecoveryJwtTokenDTO;
+import com.api.receitaqui.model.Receita;
 import com.api.receitaqui.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -23,6 +26,23 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/savedRecipes")
+    public ResponseEntity<List<Receita>> getSavedRecipes() {
+        List<Receita> savedRecipes = userService.getSavedRecipesOfLoggedUser();
+        return new ResponseEntity<>(savedRecipes, HttpStatus.OK);
+    }
+
+    @PostMapping("/saveRecipe/{id}")
+    public ResponseEntity<Void> saveRecipe(@PathVariable Long id) {
+        userService.saveRecipe(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/removeSavedRecipe/{id}")
+    public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
+        userService.removeSavedRecipe(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 
     @PostMapping
